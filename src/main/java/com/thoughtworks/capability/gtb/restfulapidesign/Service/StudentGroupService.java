@@ -8,10 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,5 +42,24 @@ public class StudentGroupService {
 
     public List<StudentGroup> getStudentGroups() {
         return new ArrayList<>(this.studentGroups.values());
+    }
+
+    public void groupStudents(List<Student> students,int groupCount) {
+        Collections.shuffle(students,new Random());
+        for (StudentGroup group:this.getStudentGroups()) {
+            group.setStudents(null);
+        }
+
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            final int groupId = (i + 1) % groupCount == 0 ? 6 : (i + 1) % groupCount;
+            final StudentGroup studentGroup = this.getStudentGroupById(groupId);
+            List<Student> studentList = studentGroup.getStudents();
+            if (studentList == null) {
+                studentList = new ArrayList<>();
+            }
+            studentList.add(student);
+            studentGroup.setStudents(studentList);
+        }
     }
 }

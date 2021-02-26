@@ -45,20 +45,7 @@ public class StudentManagementService {
 
     public List<StudentGroup> groupStudents(int groupCount) {
         final List<Student> students = this.studentService.getStudents(null);
-        Collections.shuffle(students,new Random());
-        System.out.println("\nShuffled List with Random(5) : \n"
-                + students);
-        for (int i = 0; i < students.size(); i++) {
-            Student student = students.get(i);
-            final int groupId = (i + 1) % groupCount == 0 ? 6 : (i + 1) % groupCount;
-            final StudentGroup studentGroup = this.studentGroupService.getStudentGroupById(groupId);
-            List<Student> studentList = studentGroup.getStudents();
-            if (studentList == null) {
-                studentList = new ArrayList<>();
-            }
-            studentList.add(student);
-            studentGroup.setStudents(studentList);
-        }
+        this.studentGroupService.groupStudents(students,groupCount);
         return this.studentGroupService.getStudentGroups();
     }
 }
