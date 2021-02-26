@@ -39,14 +39,15 @@ public class StudentService {
     }
 
     public Student getStudentById(int id) {
-        Student student = students.get(id);
+        final Student student = students.get(id);
         if (student == null) {
             throw new IllegalArgumentException("student not found");
         }
         return student;
     }
 
-    public void UpdateStudentById(int id,Student student) {
-        students.replace(id,student);
+    public Student UpdateStudentById(Integer id,Student student) {
+        this.students.put(id,student);
+        return this.students.get(id);
     }
 }

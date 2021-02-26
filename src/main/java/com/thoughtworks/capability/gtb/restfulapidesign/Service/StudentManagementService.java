@@ -7,16 +7,13 @@ import lombok.Getter;
 import lombok.var;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentManagementService {
     private final StudentService studentService = new StudentService();
     private final StudentGroupService studentGroupService = new StudentGroupService();
-    private @Getter final Map<StudentGroup,List<Student>> studentGroupListMap = new HashMap<>();
 
     public void createStudent(Student student) {
         this.studentService.createStudent(student);
@@ -34,28 +31,34 @@ public class StudentManagementService {
         return this.studentService.getStudentById(id);
     }
 
-    public void updateStudentInformation(int id, Student student) {
-        this.studentService.UpdateStudentById(id,student);
+    public Student updateStudentInformation(int id, Student student) {
+        return this.studentService.UpdateStudentById(id,student);
+    }
+
+    public List<StudentGroup> getStudentGroups() {
+        return this.studentGroupService.getStudentGroups();
     }
 
     public void updateStudentGroupNameById(int id,String name) {
         this.studentGroupService.updateGroupName(id,name);
     }
 
-    public void getStudentGroups() {
-        this.studentGroupService.getStudentGroups();
-    }
-
-    public void groupStudents(int groupCount) {
-        var students = this.studentService.getStudents(null);
-        for (Student student : students) {
-            var groupId = student.getId() % groupCount;
-            var studentGroup = this.studentGroupService.getStudentGroupById(groupId);
-            var studentList = this.studentGroupListMap.get(studentGroup);
+    public List<StudentGroup> groupStudents(int groupCount) {
+        final List<Student> students = this.studentService.getStudents(null);
+        Collections.shuffle(students,new Random());
+        System.out.println("\nShuffled List with Random(5) : \n"
+                + students);
+        for (int i = 0; i < students.size(); i++) {
+            Student student = students.get(i);
+            final int groupId = (i + 1) % groupCount == 0 ? 6 : (i + 1) % groupCount;
+            final StudentGroup studentGroup = this.studentGroupService.getStudentGroupById(groupId);
+            List<Student> studentList = studentGroup.getStudents();
             if (studentList == null) {
                 studentList = new ArrayList<>();
             }
             studentList.add(student);
+            studentGroup.setStudents(studentList);
         }
+        return this.studentGroupService.getStudentGroups();
     }
 }

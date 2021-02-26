@@ -42,24 +42,26 @@ public class StudentManagementController {
         return this.studentManagementService.getStudentById(id);
     }
 
-    @PutMapping("student/{id}")
-    public void updateStudentInformation(@PathVariable("id") int id, @RequestBody Student student) {
-        this.studentManagementService.updateStudentInformation(id,student);
+    @PutMapping("/students/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Student updateStudentInformation(@PathVariable("id") int id, @RequestBody Student student) {
+        return this.studentManagementService.updateStudentInformation(id,student);
     }
 
-    @PatchMapping("studentGroups/{id}")
+    @PatchMapping("/studentgroups/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public void updateStudentGroupNameById(@PathVariable("id") int id,@RequestBody String name) {
         this.studentManagementService.updateStudentGroupNameById(id,name);
     }
 
-    @GetMapping("studentGroups")
-    public Map<StudentGroup,List<Student>> getStudentGroups() {
-        return this.studentManagementService.getStudentGroupListMap();
+    @GetMapping("/studentgroups")
+    public List<StudentGroup> getStudentGroups() {
+        return this.studentManagementService.getStudentGroups();
     }
 
-    @PostMapping("students/group")
-    public void groupStudent(@RequestParam(name = "groupCount",defaultValue = DEFAULT_GROUP_COUNT) int groupCount) {
-        this.studentManagementService.groupStudents(groupCount);
+    @GetMapping("/students/group")
+    public List<StudentGroup> groupStudent(@RequestParam(name = "group-count",defaultValue = DEFAULT_GROUP_COUNT,required = false) int groupCount) {
+        return this.studentManagementService.groupStudents(groupCount);
     }
     
 }
